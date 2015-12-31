@@ -3,7 +3,7 @@
 
 
 angular.module('lumx.utils.utils', [])
-    .service('LxUtils', function()
+    .service('LxUtils', ['$window', function($window)
     {
         function generateUUID()
         {
@@ -20,7 +20,13 @@ angular.module('lumx.utils.utils', [])
             return uuid.toUpperCase();
         }
 
+        function getEmSize(el)
+        {
+            return Number($window.getComputedStyle(el, "").fontSize.match(/(\d+)px/)[1]);
+        }
+
         return {
-            generateUUID: generateUUID
+            generateUUID: generateUUID,
+            getEmSize: getEmSize
         };
-    });
+    }]);

@@ -34,8 +34,8 @@ angular.module('lumx.scrollbar', [])
         };
 
     }])
-    .controller('LxScrollbarController', ['$scope', '$window', 'LxScrollbarService',
-        function($scope, $window, LxScrollbarService)
+    .controller('LxScrollbarController', ['$scope', '$window', 'LxScrollbarService', 'LxUtils',
+        function($scope, $window, LxScrollbarService, LxUtils)
     {
         var mousePosition,
             scrollbarId,
@@ -121,16 +121,27 @@ angular.module('lumx.scrollbar', [])
                 }
             });
 
-            scrollbarContainer.bind('mousewheel', function(event)
+            scrollbarContainer.bind('wheel', function(event)
             {
                 if ($window.innerWidth >= 1024)
                 {
                     event.preventDefault();
 
                     var scrollPercent = scrollbarContainer.scrollTop() / scrollBottom,
-                        scrollPosition = (scrollbarContainerHeight - scrollbarYAxisHandle.outerHeight()) * scrollPercent;
+                        scrollPosition = (scrollbarContainerHeight - scrollbarYAxisHandle.outerHeight()) * scrollPercent,
+                        deltaY = 0;
 
-                    updateScroll(scrollPosition, scrollbarContainer.scrollTop() + event.originalEvent.wheelDelta * -1);
+                    switch(event.originalEvent.deltaMode)
+                    {
+                    case $window.WheelEvent.DOM_DELTA_PIXEL :
+                        deltaY = event.originalEvent.deltaY;
+                        break;
+                    case $window.WheelEvent.DOM_DELTA_LINE :
+                        deltaY = LxUtils.getEmSize(event.originalEvent.target)*event.originalEvent.deltaY;
+                        break;
+                    }
+
+                    updateScroll(scrollPosition, scrollbarContainer.scrollTop() + deltaY*0.5);
                 }
             });
 
